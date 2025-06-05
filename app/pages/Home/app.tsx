@@ -1,10 +1,13 @@
 import BalanceItem from '@/app/components/BalanceItem';
+import HistoricList from '@/app/components/HistoricList/app';
 import api from '@/app/services/api';
 import { useIsFocused } from '@react-navigation/native';
 import { format } from 'date-fns';
 import React, { useEffect } from 'react';
+import { TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import Header from '../../components/Header';
-import { Background, ListBalance } from './styles';
+import { Area, Background, List, ListBalance, Title } from './styles';
 
 export default function Home() {
   const isFocused = useIsFocused();
@@ -35,16 +38,29 @@ export default function Home() {
   return (
     <Background>
       <Header title="Minhas movimentações" />
-      <ListBalance 
-      data ={listBalance}
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      keyExtractor={(item: any) => item.tag}
-      renderItem={({ item }: any) => (
-        <BalanceItem data={item}/>
-      )   }>
+      <ListBalance
+        data={listBalance}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        keyExtractor={(item: any) => item.tag}
+        renderItem={({ item }: any) => (
+          <BalanceItem data={item} />
+        )} />
+      <Area>
+        <TouchableOpacity onPress={() => { }}>
+          <Icon name="event" size={30} color="#121212" />
+        </TouchableOpacity>
+        <Title>Ultimas Movimentações</Title>
+      </Area>
 
-      </ListBalance>
+      <List
+        data={[]}
+        keyExtractor={(item: any) => item.id}
+        renderItem={({ item }: any) => (<HistoricList />)}
+        showsVerticalScrollIndicator={false}
+      />
+
+
     </Background>
   );
 }
