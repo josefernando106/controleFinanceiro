@@ -21,6 +21,7 @@ export default function Home() {
           date: dateFormatted
         }
       })
+      console.log(response.data);
       if (isActive) {
         setListBalance(response.data);
       }
