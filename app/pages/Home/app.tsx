@@ -9,23 +9,33 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import Header from '../../components/Header';
 import { Area, Background, List, ListBalance, Title } from './styles';
 
+
 export default function Home() {
   const isFocused = useIsFocused();
   const [listBalance, setListBalance] = React.useState<any[]>([]);
   const [dateMoviments, setDateMoviments] = React.useState(new Date());
+  const [moviments, setMoviments] = React.useState<any[]>([]);
 
   useEffect(() => {
     let isActive = true;
 
     async function getMoviments() {
       let dateFormatted = format(dateMoviments, 'dd/MM/yyyy');
+      
+      
+      const receives = await api.get('/receives', {
+        params: {
+          date: dateFormatted
+        }})
+
       const response = await api.get('/balance', {
         params: {
           date: dateFormatted
         }
       })
-      console.log(response.data);
+      
       if (isActive) {
+        setMoviments(receives.data);
         setListBalance(response.data);
       }
     }
@@ -34,7 +44,20 @@ export default function Home() {
 
     return () => { isActive = false; };
 
-  }, [isFocused]);
+  }, [isFocused, dateMoviments]);
+
+  async function handleDeleteItem(id: string) {
+    try{
+      await api.delete(`/receives/delete`,{
+        params: {
+          item_id: id
+        }
+      });
+      setDateMoviments(new Date()); // Refresh the list after deletion
+    }catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <Background>
@@ -55,10 +78,11 @@ export default function Home() {
       </Area>
 
       <List
-        data={[]}
+        data={moviments}
         keyExtractor={(item: any) => item.id}
-        renderItem={({ item }: any) => (<HistoricList />)}
+        renderItem={({ item }: any) => (<HistoricList data={item} deleteItem={handleDeleteItem}/>)}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 30 }}
       />
 
 
