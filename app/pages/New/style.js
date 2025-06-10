@@ -4,6 +4,7 @@ export const Background = styled.View`
     flex: 1;
     background-color: #f0f4ff;
 `;
+
 export const Input = styled.TextInput`
     height: 50px;
     width: 90%;

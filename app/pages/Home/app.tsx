@@ -84,8 +84,6 @@ export default function Home() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 30 }}
       />
-
-
     </Background>
   );
 }
