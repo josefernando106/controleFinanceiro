@@ -26,6 +26,7 @@ export const Title = styled.Text`
     margin-bottom: 14px;
     font-weight: bold;
     font-size: 18px;
+    align-self: center;
 `;
 
 export const List = styled.FlatList`
