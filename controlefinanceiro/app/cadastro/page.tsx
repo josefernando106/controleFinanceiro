@@ -26,7 +26,8 @@ export default function Cadastro() {
     }
 
     try {
-      const res = await fetch("http://localhost:3001/api/auth/cadastro", {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+      const res = await fetch(`${API_URL}/api/auth/cadastro`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password }),
