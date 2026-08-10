@@ -9,7 +9,7 @@ const supabaseAnonKey = process.env.SUPABASE_ANON_KEY!;
 // Cliente público — usa para operações de auth (login, cadastro)
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// Cliente admin — usa para operações que precisam de acesso elevado
-// Descomente quando tiver a service role key configurada
-// const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-// export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+// Cliente admin — usa service role key, ignora RLS. Toda query feita com
+// esse cliente precisa filtrar/gravar user_id manualmente na aplicação.
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
