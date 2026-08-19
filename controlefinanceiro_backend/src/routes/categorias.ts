@@ -5,54 +5,37 @@ import { authMiddleware, AuthRequest } from "../middlewares/auth";
 const router = Router();
 router.use(authMiddleware);
 
-// GET /api/transacoes
+// GET /api/categorias
 router.get("/", async (req: AuthRequest, res: Response) => {
   const { data, error } = await supabaseAdmin
-    .from("transacoes")
+    .from("categorias")
     .select("*")
     .eq("user_id", req.user!.id)
-    .order("data_vencimento", { ascending: false });
+    .order("nome", { ascending: true });
 
   if (error) {
     res.status(400).json({ error: error.message });
     return;
   }
 
-  res.json({ transacoes: data });
+  res.json({ categorias: data });
 });
 
-// POST /api/transacoes
+// POST /api/categorias
 router.post("/", async (req: AuthRequest, res: Response) => {
-  const {
-    descricao,
-    valor,
-    tipo,
-    recorrencia,
-    is_paid,
-    data_vencimento,
-    data_pagamento,
-    categoria_id,
-  } = req.body;
+  const { nome, cor } = req.body;
 
-  if (!descricao || valor == null || !tipo || !data_vencimento) {
-    res.status(400).json({
-      error: "Descrição, valor, tipo e data de vencimento são obrigatórios",
-    });
+  if (!nome) {
+    res.status(400).json({ error: "Nome é obrigatório" });
     return;
   }
 
   const { data, error } = await supabaseAdmin
-    .from("transacoes")
+    .from("categorias")
     .insert({
       user_id: req.user!.id,
-      descricao,
-      valor,
-      tipo,
-      recorrencia: recorrencia ?? "unica",
-      is_paid: is_paid ?? false,
-      data_vencimento,
-      data_pagamento,
-      categoria_id: categoria_id ?? null,
+      nome,
+      cor,
     })
     .select()
     .single();
@@ -62,33 +45,18 @@ router.post("/", async (req: AuthRequest, res: Response) => {
     return;
   }
 
-  res.status(201).json({ transacao: data });
+  res.status(201).json({ categoria: data });
 });
 
-// PUT /api/transacoes/:id
+// PUT /api/categorias/:id
 router.put("/:id", async (req: AuthRequest, res: Response) => {
-  const {
-    descricao,
-    valor,
-    tipo,
-    recorrencia,
-    is_paid,
-    data_vencimento,
-    data_pagamento,
-    categoria_id,
-  } = req.body;
+  const { nome, cor } = req.body;
 
   const { data, error } = await supabaseAdmin
-    .from("transacoes")
+    .from("categorias")
     .update({
-      descricao,
-      valor,
-      tipo,
-      recorrencia,
-      is_paid,
-      data_vencimento,
-      data_pagamento,
-      categoria_id: categoria_id ?? null,
+      nome,
+      cor,
       updated_at: new Date().toISOString(),
     })
     .eq("id", req.params.id)
@@ -102,17 +70,17 @@ router.put("/:id", async (req: AuthRequest, res: Response) => {
   }
 
   if (!data) {
-    res.status(404).json({ error: "Transação não encontrada" });
+    res.status(404).json({ error: "Categoria não encontrada" });
     return;
   }
 
-  res.json({ transacao: data });
+  res.json({ categoria: data });
 });
 
-// DELETE /api/transacoes/:id
+// DELETE /api/categorias/:id
 router.delete("/:id", async (req: AuthRequest, res: Response) => {
   const { error, count } = await supabaseAdmin
-    .from("transacoes")
+    .from("categorias")
     .delete({ count: "exact" })
     .eq("id", req.params.id)
     .eq("user_id", req.user!.id);
@@ -123,7 +91,7 @@ router.delete("/:id", async (req: AuthRequest, res: Response) => {
   }
 
   if (!count) {
-    res.status(404).json({ error: "Transação não encontrada" });
+    res.status(404).json({ error: "Categoria não encontrada" });
     return;
   }
 
