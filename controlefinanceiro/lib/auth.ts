@@ -4,6 +4,7 @@ export type StoredUser = {
   id: string;
   email: string;
   name?: string;
+  role?: "admin" | "membro";
 };
 
 export function getStoredUser(): StoredUser | null {

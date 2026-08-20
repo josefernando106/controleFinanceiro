@@ -20,6 +20,7 @@ export async function GET(req: NextRequest) {
       id: data.user.id,
       email: data.user.email,
       name: data.user.user_metadata?.name,
+      role: data.user.user_metadata?.role === "membro" ? "membro" : "admin",
       created_at: data.user.created_at,
     },
   });

@@ -22,6 +22,9 @@ export default function DashboardLayout({ children }: Readonly<{ children: React
   const token = useLocalStorageRaw("token");
   const userRaw = useLocalStorageRaw("user");
   const user: StoredUser | null = userRaw ? JSON.parse(userRaw) : null;
+  const navItems = NAV_ITEMS.filter(
+    (item) => item.href !== "/dashboard/usuarios" || user?.role === "admin"
+  );
 
   useEffect(() => {
     // Re-read directly instead of trusting `token`: useSyncExternalStore can
@@ -68,7 +71,7 @@ export default function DashboardLayout({ children }: Readonly<{ children: React
         </div>
 
         <nav className="flex-1 space-y-1 px-3 py-4">
-          {NAV_ITEMS.map((item) => {
+          {navItems.map((item) => {
             const active =
               item.href === "/dashboard"
                 ? pathname === "/dashboard"

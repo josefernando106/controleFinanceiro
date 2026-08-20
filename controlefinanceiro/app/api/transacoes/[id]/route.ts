@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase-server";
-import { getAuthUser } from "@/lib/auth-server";
+import { getAuthUser, getFamilyId } from "@/lib/auth-server";
 
 export async function PUT(
   req: NextRequest,
@@ -37,7 +37,7 @@ export async function PUT(
       updated_at: new Date().toISOString(),
     })
     .eq("id", id)
-    .eq("user_id", auth.user.id)
+    .eq("user_id", getFamilyId(auth.user))
     .select()
     .single();
 
@@ -67,7 +67,7 @@ export async function DELETE(
     .from("transacoes")
     .delete({ count: "exact" })
     .eq("id", id)
-    .eq("user_id", auth.user.id);
+    .eq("user_id", getFamilyId(auth.user));
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 400 });
