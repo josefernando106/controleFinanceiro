@@ -14,6 +14,7 @@ export default function Cadastro() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [checkEmail, setCheckEmail] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -42,13 +43,46 @@ export default function Cadastro() {
       if (data.session) {
         localStorage.setItem("token", data.session.access_token);
         localStorage.setItem("user", JSON.stringify(data.user));
+        router.push("/dashboard");
+      } else {
+        // Confirmação de e-mail habilitada no Supabase: sem sessão ainda,
+        // o login só funciona depois que o link no e-mail for confirmado.
+        setCheckEmail(true);
       }
-      router.push("/dashboard");
     } catch {
       setError("Erro ao conectar com o servidor");
     } finally {
       setLoading(false);
     }
+  }
+
+  if (checkEmail) {
+    return (
+      <div className="flex flex-1 items-center justify-center bg-zinc-50 px-4 dark:bg-black">
+        <div className="w-full max-w-md space-y-6 text-center">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-7 w-7">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+            </svg>
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+              Verifique seu e-mail
+            </h1>
+            <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+              Enviamos um link de confirmação para <strong>{email}</strong>. Abra o
+              e-mail e confirme sua conta para poder fazer login.
+            </p>
+          </div>
+          <Link
+            href="/login"
+            className="inline-block font-medium text-emerald-600 hover:text-emerald-500 dark:text-emerald-400"
+          >
+            Voltar para o login
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   return (

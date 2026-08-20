@@ -18,11 +18,13 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Quem se cadastra publicamente vira o "admin" da própria família —
+  // membros só são criados depois, pelo admin, em /dashboard/usuarios.
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
-      data: { name },
+      data: { name, role: "admin" },
     },
   });
 
@@ -36,6 +38,7 @@ export async function POST(req: NextRequest) {
         id: data.user?.id,
         email: data.user?.email,
         name,
+        role: "admin",
       },
       session: data.session,
     },

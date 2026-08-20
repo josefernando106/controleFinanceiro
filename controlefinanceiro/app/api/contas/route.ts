@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase-server";
-import { getAuthUser } from "@/lib/auth-server";
+import { getAuthUser, getFamilyId } from "@/lib/auth-server";
 
 export async function GET(req: NextRequest) {
   const auth = await getAuthUser(req);
@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
   const { data, error } = await supabaseAdmin
     .from("contas")
     .select("*")
-    .eq("user_id", auth.user.id)
+    .eq("user_id", getFamilyId(auth.user))
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
   const { data, error } = await supabaseAdmin
     .from("contas")
     .insert({
-      user_id: auth.user.id,
+      user_id: getFamilyId(auth.user),
       nome,
       tipo,
       saldo_inicial: saldo_inicial ?? 0,
